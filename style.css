@@ -1,0 +1,14 @@
+#btn
+{
+    background-color: red;
+    padding: 40px;
+    margin: 40px;;  
+}
+#btn[data-click-state='0']
+{
+    background-color: red;
+}
+#btn[data-click-state='1']
+{
+    background-color:orange;
+}
