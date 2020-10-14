@@ -22,8 +22,10 @@ $(function(){
     
     $.ajax({
       url :'http://localhost:8080/ajax',
-      type : 'POST',
+      //contentType:'application/json',
+      type : 'GET',
       dataType : 'jsonp',
+      //reponseTYpe:'application/json',
       success : function(code_JSON, statut){
         console.log('Success'),
         console.log(statut),

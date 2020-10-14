@@ -12,9 +12,8 @@ server.on('request' , (request,response) => {
     //console.log(url.parse(request.url))
     //console.log(url_parts.path)
     const headers = {
+        'Access-Control-Allow-Credentials' : true,
         "Access-Control-Allow-Origin": "*",
-        //file:///Users/acleret/Desktop/Objectif/Objectif_7/index.html",
-        //vary:origin,
         "Access-Control-Allow-Methods": "OPTIONS, POST, GET",
         "Access-Control-Max-Age": 2592000, 
       }
