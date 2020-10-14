@@ -24,13 +24,13 @@ $(function(){
       url :'http://localhost:8080/ajax',
       //contentType:'application/json',
       type : 'GET',
-      dataType : 'jsonp',
+      dataType : 'json',
       //reponseTYpe:'application/json',
       success : function(code_JSON, statut){
         console.log('Success'),
-        console.log(statut),
-        console.log(code_JSON);
-        $(code_JSON).appendTo('#result')
+        console.log(statut)
+        console.log(code_JSON.message);
+        $('#myModal').find('.modal-body h4').text(code_JSON.message)
       },
 
       error : function(resultat,statut , erreur){

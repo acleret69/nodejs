@@ -9,10 +9,8 @@ const server = http.createServer()
 server.on('request' , (request,response) => {
 
     var url_parts = url.parse(request.url)
-    //console.log(url.parse(request.url))
-    //console.log(url_parts.path)
+    
     const headers = {
-        'Access-Control-Allow-Credentials' : true,
         "Access-Control-Allow-Origin": "*",
         "Access-Control-Allow-Methods": "OPTIONS, POST, GET",
         "Access-Control-Max-Age": 2592000, 
@@ -65,7 +63,7 @@ server.listen('8080')
 //         response.end()
 //         return
 //       }
-//     if(url_parts.path == '/ajax')
+//     if(url_parts.pathname == '/ajax')
 //     {
 //         response.setHeader('Content-Type','application/json');
 //         response.writeHead(200, headers); // Il manquait les headers aussi ici
