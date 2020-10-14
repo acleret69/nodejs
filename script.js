@@ -18,16 +18,12 @@ $(function(){
     i=i+1
   });
 
-
-  // var myData={};
-  // myData.title = this.MessageInput.value;
-  
   $('#ajax').on('click',function(){
     
     $.ajax({
       url :'http://localhost:8080/ajax',
       type : 'POST',
-      dataType : 'json',
+      dataType : 'jsonp',
       success : function(code_JSON, statut){
         console.log('Success'),
         console.log(statut),

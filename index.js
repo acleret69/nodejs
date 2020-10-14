@@ -9,9 +9,12 @@ const server = http.createServer()
 server.on('request' , (request,response) => {
 
     var url_parts = url.parse(request.url)
+    //console.log(url.parse(request.url))
     //console.log(url_parts.path)
     const headers = {
         "Access-Control-Allow-Origin": "*",
+        //file:///Users/acleret/Desktop/Objectif/Objectif_7/index.html",
+        //vary:origin,
         "Access-Control-Allow-Methods": "OPTIONS, POST, GET",
         "Access-Control-Max-Age": 2592000, 
       }
@@ -22,7 +25,7 @@ server.on('request' , (request,response) => {
         return
       }
 
-    if(url_parts.path == '/ajax')
+    if(url_parts.pathname == '/ajax')
     {
         response.setHeader('Content-Type','application/json');
         response.end(JSON.stringify({message: "hello world ajax"}))
