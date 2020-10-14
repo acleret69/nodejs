@@ -1,68 +1,31 @@
-let http = require('http')
-let url = require ("url")
-let fs =require ('fs')
+var http = require('http')
+var url = require ("url")
+var fs =require ('fs')
+const { type } = require('os')
 
 let server = http.createServer()
 
-     const urlObject=url.parse(request.url, true)
-     const fileName = urlObject.pathname
-    console.log(fileName.toString())
+server.on('request' , (request,response) => {
 
-server.on('request', (request,response) => {
-console.log(urlObject.toString())
+    var url_parts = url.parse(request.url)
+    //console.log(url_parts.path)
 
-    if()
+    if(url_parts.path == '/ajax')
     {
-        console.log('request was made: ' + Request.url);
-        response.writeHead(200, {'Content-Type' : 'application/json'});
-        var myObj = {message : 'Hello world ajax'}        
-    } 
-    else 
+        response.setHeader('Content-Type','application/json');
+        response.end(JSON.stringify({message: "hello wordl ajax"}))
+    }
+    else
     {
         response.writeHead(200 , {
             'content-type': 'text/html; charset =utf-8'
+            
         })
-        console.log("hello World")
-        response("Hello Word")
-        
+        response.end('Hello Word')
     }
-    response.end();
+
 })
 server.listen('8080')
-
-
-
-
-// const { fstat } = require('fs')
-// let http = require('http')
-// let url = require('url')
-
-// let server = http.createServer()
-
-// server.on('request', (request,response) => {
-
-//     const urlObject=url.parse(request.url, true)
-//     const fileName = urlObject.pathname
-//     console.log(fileName)
-
-
-//     if (request.fileName = '/ajax'){
-//     response.writeHead(200 , {
-//         'content-type': 'text/html; charset =utf-8'
-//     })
-//     console.log('good')
-
-//     response.end('Hello Word')
-//     }
-
-//     else 
-//      reponse.writeHead(200)
-
-//      console.log('error')
-//      reponse.end('error')
-
-// }) 
-// server.listen('8080');
 
 
     

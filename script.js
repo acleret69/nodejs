@@ -18,47 +18,33 @@ $(function(){
     i=i+1
   });
 
-  var getHttpRequest = function () {
-    var httpRequest = false;
-  
-    if (window.XMLHttpRequest) { // Mozilla, Safari,...
-      httpRequest = new XMLHttpRequest();
-      if (httpRequest.overrideMimeType) {
-        httpRequest.overrideMimeType('text/xml');
-      }
-    }
-    else if (window.ActiveXObject) { // IE
-      try {
-        httpRequest = new ActiveXObject("Msxml2.XMLHTTP");
-      }
-      catch (e) {
-        try {
-          httpRequest = new ActiveXObject("Microsoft.XMLHTTP");
-        }
-        catch (e) {}
-      }
-    }
-  
-    if (!httpRequest) {
-      alert('Abandon :( Impossible de créer une instance XMLHTTP');
-      return false;
-    }
-  
-    return httpRequest
-  }
 
-  var xhr = getHttpRequest()
+  var myData={};
+  myData.title = this.MessageInput.value;
   $('#ajax').on('click',function(){
+    
+    $.ajax({
+      url :'http://localhost:8080/ajax',
+      type : 'GET',
+      dataType : 'JSON',
+      success : function(code_JSON, statut){
+        console.log('Success')
+        console.log(statut)
+        console.log(code_JSON)
+        $(code_JSON).appendTo('#result')
+      },
 
-    xhr.open('GET',"http://localhost:8080/ajax",true)
-    xhr.onreadystatechange=function (){
-     if(xhr.onreadystate === 4){
-        var results = JSON.parse(xhr.reponseText)
-       console.log(results)
-      
+      error : function(resultat,statut , erreur){
+        console.log('Error')
+        console.log(resultat)
+        console.log(statut)
+
+
       }
-    }
-    xhr.send()
+
+
+    });
+    
   });
 
 
