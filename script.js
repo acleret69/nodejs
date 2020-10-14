@@ -19,36 +19,29 @@ $(function(){
   });
 
 
-  var myData={};
-  myData.title = this.MessageInput.value;
+  // var myData={};
+  // myData.title = this.MessageInput.value;
+  
   $('#ajax').on('click',function(){
     
     $.ajax({
       url :'http://localhost:8080/ajax',
-      type : 'GET',
-      dataType : 'JSON',
+      type : 'POST',
+      dataType : 'json',
       success : function(code_JSON, statut){
-        console.log('Success')
-        console.log(statut)
-        console.log(code_JSON)
+        console.log('Success'),
+        console.log(statut),
+        console.log(code_JSON);
         $(code_JSON).appendTo('#result')
       },
 
       error : function(resultat,statut , erreur){
-        console.log('Error')
-        console.log(resultat)
-        console.log(statut)
-
-
+        console.log('Error'),
+        console.log(resultat),
+        console.log(statut);
       }
-
-
-    });
-    
+    });  
   });
-
-
-
 });
 
 
