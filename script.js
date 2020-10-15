@@ -22,10 +22,8 @@ $(function(){
     
     $.ajax({
       url :'http://localhost:8080/ajax',
-      //contentType:'application/json',
       type : 'GET',
       dataType : 'json',
-      //reponseTYpe:'application/json',
       success : function(code_JSON, statut){
         console.log('Success'),
         console.log(statut)
@@ -40,6 +38,28 @@ $(function(){
       }
     });  
   });
+
+  $('#BDD').on('click',function(){
+    
+    $.ajax({
+      url :'http://localhost:8080/ajax1',
+      type : 'GET',
+      dataType : 'json',
+      success : function(code_JSON, statut){
+        console.log('Success'),
+        console.log(statut)
+        console.log(code_JSON);
+        $('#myModal').find('.modal-body p').text(JSON.stringify(code_JSON))
+      },
+
+      error : function(resultat,statut , erreur){
+        console.log('Error'),
+        console.log(resultat),
+        console.log(statut);
+      }
+    });  
+  });
+
 });
 
 

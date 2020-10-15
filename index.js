@@ -1,8 +1,10 @@
 var http = require('http')
 var url = require ("url")
 var fs =require ('fs')
+const mysql = require('mysql');
 const { type } = require('os')
 const { constants } = require('buffer')
+
 
 const server = http.createServer()
 
@@ -28,6 +30,43 @@ server.on('request' , (request,response) => {
         response.writeHead(200,headers)
         response.end(JSON.stringify({message: "hello world ajax"}))
     }
+    else if (url_parts.pathname == '/ajax1')
+    {
+      var con = mysql.createConnection({
+
+        host: "localhost",
+     
+        user: "root",
+     
+        password: "YLq+ckK1dEVh",
+     
+        database : "User"
+     
+      });
+     
+       con.connect(function(err) {
+     
+        if (err) throw err;
+     
+        console.log("Connecté à la base de données MySQL!");
+
+        con.query("SELECT * FROM user ", 
+        
+        function (err, result) {
+     
+            if (err) throw err;
+     
+            //console.log(result);
+            //console.log(JSON.stringify(result[0]))
+            response.setHeader('Content-Type','application/json')
+            response.writeHead(200,headers)
+            response.end(JSON.stringify(result))
+     
+          });
+     
+      }); 
+
+    }
     else
     {
         response.writeHead(200 , {
@@ -39,43 +78,4 @@ server.on('request' , (request,response) => {
 })
 server.listen('8080')
 
-// var http = require('http')
-// var url = require ("url")
-// var fs =require ('fs')
-// const { type } = require('os')
-// const { constants } = require('buffer')
-
-
-// const server = http.createServer()
-
-// server.on('request' , (request,response) => {
-
-//     var url_parts = url.parse(request.url)
-//     //console.log(url_parts.path)
-//     const headers = {
-//         "Access-Control-Allow-Origin": "*",
-//         "Access-Control-Allow-Methods": "OPTIONS, POST, GET",
-//         "Access-Control-Max-Age": 2592000,
-//       }
-
-//       if (request.method === "OPTIONS") {
-//         response.writeHead(204, headers) // Tu avais mis 'request' au lieu de response
-//         response.end()
-//         return
-//       }
-//     if(url_parts.pathname == '/ajax')
-//     {
-//         response.setHeader('Content-Type','application/json');
-//         response.writeHead(200, headers); // Il manquait les headers aussi ici
-//         response.end(JSON.stringify({message: "hello world ajax"}))
-//     }
-//     else
-//     {
-//         response.writeHead(200 , {
-//             'content-type': 'text/html; charset =utf-8'
-//         })
-//         response.end('Hello Word')
-//     }
-// })
-// server.listen('8080')
     
