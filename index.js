@@ -1,10 +1,19 @@
 var http = require('http')
 var url = require ("url")
 var fs =require ('fs')
-const mysql = require('mysql');
+const mysql = require('mysql')
 const { type } = require('os')
 const { constants } = require('buffer')
 
+const App_host = process.env.App_host;
+const App_user = process.env.App_user;
+const App_password = process.env.App_password;
+const App_database = process.env.App_database;
+
+console.log(App_host)
+console.log(App_user)
+console.log(App_password)
+console.log(App_database)
 
 const server = http.createServer()
 
@@ -14,7 +23,7 @@ server.on('request' , (request,response) => {
     
     const headers = {
         "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Methods": "OPTIONS, POST, GET",
+        "Access-Control-Allow-Methods": "OPTIONS, POST, GET , GETJSON",
         "Access-Control-Max-Age": 2592000, 
       }
 
@@ -30,17 +39,17 @@ server.on('request' , (request,response) => {
         response.writeHead(200,headers)
         response.end(JSON.stringify({message: "hello world ajax"}))
     }
-    else if (url_parts.pathname == '/ajax1')
+    else if (url_parts.pathname == '/User')
     {
       var con = mysql.createConnection({
 
-        host: "localhost",
+        host: App_host,
      
-        user: "root",
+        user: App_user,
      
-        password: "YLq+ckK1dEVh",
+        password: App_password,
      
-        database : "User"
+        database : App_database
      
       });
      

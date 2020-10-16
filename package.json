@@ -13,7 +13,9 @@
   "license": "ISC",
   "dependencies": {
     "bootstrap": "^4.5.2",
+    "env-cmd": "^10.1.0",
     "jquery": "^3.5.1",
     "mysql": "^2.18.1"
-  }
+  },
+  "devDependencies": {}
 }

@@ -12,7 +12,7 @@
     </head>
     <body>
         <!-- Button to Open the Modal -->
-<button type="button" id="btn"  data-toggle="modal" data-target="#myModal" data-whatever="compteur ">
+<button type="button" id="btn"  data-toggle="modal" data-target="#myModal" data-whatever="compteur "  onLoad="buildHtmlTable('#Utilisateur')" >
     Open modal
   </button>
   
@@ -28,7 +28,7 @@
         </div>
   
         <!-- Modal body -->
-        <div class="modal-body">
+        <div class="modal-body"  onLoad="buildHtmlTable('#Utilisateur')">
           <h5></h5> 
           <br>
           <input type='button' onclick='window.open("http://localhost:8080/");' value="Nouvelle page" />
@@ -42,7 +42,19 @@
           <button id="BDD">Info</button>
           <br>
           <br>
-          <p>BDD</p>
+          <table class="table table-bordered"></table>
+            <thead>
+              <tr>
+                  <th>id</th>
+                  <th>Name</th>
+                  <th>Age</th>
+                  <th>Prénom</th>
+              </tr>
+            </thead>
+
+            <tbody id="tdata">
+
+            </tbody>
         </div>
   
         <!-- Modal footer -->
