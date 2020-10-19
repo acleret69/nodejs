@@ -14,7 +14,8 @@ Installé tout les fichiers de gitHub
     
     - crée une table [id Primary Key , Name , Age , Prénom]
 
-    - variable d'environnement à modifier : APP_HOST ,APP_USER, APP_PASSWORD, APP_DATATABLE 
+    - variable d'environnement à modifier : APP_HOST ,APP_USER, 
+    APP_PASSWORD, APP_DATATABLE 
     Exemple : export APP_HOST="localhost"
-    
+
     
