@@ -42,47 +42,38 @@ $(function(){
   $('#BDD').on('click',function(){
     
     $.ajax({
-      url :'http://localhost:8080/User',
+      url :'http://localhost:8080/user',
       type : 'GET',
       dataType : 'json',
       success : function(code_JSON, statut){
         console.log('Success'),
         console.log(statut)
         console.log(code_JSON);
+       //('#myModal').find('.modal-body table').append(JSON.stringify(code_JSON))
 
-        //$('#myModal').find('.modal-body table').text(JSON.stringify(code_JSON))
-        // var JSON = code_JSON
-        // $.getJSON(JSON,function(data){
-        //   var user_data = '';
-        //   $.each(data, function(key, value){
-        //     user_data += '<tr>';
-        //     user_data += '<td>'+value.id+'</tr>';
-        //     user_data += '<td>'+value.Name+'</tr>';
-        //     user_data += '<td>'+value.Age+'</tr>';
-        //     user_data += '<td>'+value.Prénom+'</tr>';
-        //     user_data += '</tr>';
-        //   });
-        //   $('#myModal').find('.modal-body table').append(user_data);
-
-        // });
-
-        // buildTable(code_JSON)
-        // function buildTable(data){
-        //   var table = document.getElementById('#myModal tdata')
-      
-        //   for (var i = 0; i < data.length; i++){
-        //     var row = `<tr>
-        //             <td>${data[i].id}</td>
-        //             <td>${data[i].Name}</td>
-        //             <td>${data[i].Age}</td>
-        //             <td>${data[i].Prénom}</td>
-        //           </tr>`
-        //     table.innerHTML += row
-      
-      
-        //   }
-        // }
-
+          var user_data = '';
+          var i = 0;
+          $.each(code_JSON,function(key,value){
+            if (i==0)
+            {
+              user_data += '<tr>';
+              user_data += '<td>'+'Id'+'</td>';
+              user_data += '<td>'+'Name'+'</td>';
+              user_data += '<td>'+'Age'+'</td>';
+              user_data += '<td>'+'Prénom'+'</td>';
+              user_data += '</tr>';
+              i++
+            }
+          })
+          $.each(code_JSON, function(key, value){
+            user_data += '<tr>';
+            user_data += '<td>'+value.id+'</td>';
+            user_data += '<td>'+value.Name+'</td>';
+            user_data += '<td>'+value.Age+'</td>';
+            user_data += '<td>'+value.Prénom+'</td>';
+            user_data += '</tr>';   
+          });
+          $('#myModal').find('.modal-body table').append(user_data);
 
       },
 

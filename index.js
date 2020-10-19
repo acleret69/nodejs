@@ -5,15 +5,15 @@ const mysql = require('mysql')
 const { type } = require('os')
 const { constants } = require('buffer')
 
-const App_host = process.env.App_host;
-const App_user = process.env.App_user;
-const App_password = process.env.App_password;
-const App_database = process.env.App_database;
+const APP_HOST = process.env.APP_HOST;
+const APP_USER = process.env.APP_USER;
+const APP_PASSWORD = process.env.APP_PASSWORD;
+const APP_DATABASE = process.env.APP_DATABASE;
 
-console.log(App_host)
-console.log(App_user)
-console.log(App_password)
-console.log(App_database)
+console.log(APP_HOST)
+console.log(APP_USER)
+console.log(APP_PASSWORD)
+console.log(APP_DATABASE)
 
 const server = http.createServer()
 
@@ -39,17 +39,17 @@ server.on('request' , (request,response) => {
         response.writeHead(200,headers)
         response.end(JSON.stringify({message: "hello world ajax"}))
     }
-    else if (url_parts.pathname == '/User')
+    else if (url_parts.pathname == '/user')
     {
       var con = mysql.createConnection({
 
-        host: App_host,
+        host: APP_HOST,
      
-        user: App_user,
+        user: APP_USER,
      
-        password: App_password,
+        password: APP_PASSWORD,
      
-        database : App_database
+        database : APP_DATABASE
      
       });
      
@@ -65,8 +65,8 @@ server.on('request' , (request,response) => {
      
             if (err) throw err;
      
-            //console.log(result);
-            //console.log(JSON.stringify(result[0]))
+            console.log(result);
+            console.log(JSON.stringify(result[0]))
             response.setHeader('Content-Type','application/json')
             response.writeHead(200,headers)
             response.end(JSON.stringify(result))
