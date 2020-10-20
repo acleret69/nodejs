@@ -1,3 +1,4 @@
+
 $(function(){
   var i = 0;
   
@@ -73,7 +74,7 @@ $(function(){
             user_data += '<td>'+value.Prénom+'</td>';
             user_data += '</tr>';   
           });
-          $('#myModal').find('.modal-body table').append(user_data);
+          $('#myModal').find('.modal-body #tdata').append(user_data);
 
       },
 
@@ -84,6 +85,35 @@ $(function(){
       }
     });
 
+  });
+  $('#btn_data').on('click',function(){
+
+    $.ajax({
+      url :'http://localhost:8080/user',
+      type : 'GET',
+      dataType : 'json',
+      success : function(code_JSON,statut){
+        console.log('Success'),
+        console.log(statut)
+        console.log(code_JSON)
+        $('#table_data2').dataTable({ 
+          data : code_JSON,
+          columns:[
+            {data : 'id'},
+            {data : 'Name'},
+            {data : 'Age'},
+            {data : 'Prénom'}
+          ]
+        })
+
+      },
+
+      error : function(resultat,statut , erreur){
+        console.log('Error'),
+        console.log(resultat),
+        console.log(statut);
+      }
+    });
   });
 
 });
