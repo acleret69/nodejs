@@ -23,7 +23,7 @@ server.on('request' , (request,response) => {
     
     const headers = {
         "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Methods": "OPTIONS, POST, GET , GETJSON",
+        "Access-Control-Allow-Methods": "OPTIONS, POST, GET , GETJSON,DELETE",
         "Access-Control-Max-Age": 2592000, 
       }
 
@@ -60,6 +60,45 @@ server.on('request' , (request,response) => {
         console.log("Connecté à la base de données MySQL!");
 
         con.query("SELECT * FROM user ", 
+        
+        function (err, result) {
+     
+            if (err) throw err;
+     
+            console.log(result);
+            console.log(JSON.stringify(result[0]))
+            response.setHeader('Content-Type','application/json')
+            response.writeHead(200,headers)
+            response.end(JSON.stringify(result))
+     
+          });
+     
+      }); 
+
+    }
+    else if (url_parts.pathname == '/user_delete')
+    {
+      var con = mysql.createConnection({
+
+        host: APP_HOST,
+     
+        user: APP_USER,
+     
+        password: APP_PASSWORD,
+     
+        database : APP_DATABASE
+     
+      });
+     
+       con.connect(function(err) {
+     
+        if (err) throw err;
+     
+        console.log("Connecté à la base de données MySQL!");
+
+        con.query("Delete FROM user where id like "+user_id,
+
+        console.log("L'utilisateur as été supprimer "),
         
         function (err, result) {
      

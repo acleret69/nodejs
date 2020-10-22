@@ -1,4 +1,3 @@
-
 $(function(){
   var i = 0;
   
@@ -102,7 +101,10 @@ $(function(){
             {data : 'id'},
             {data : 'Name'},
             {data : 'Age'},
-            {data : 'Prénom'}
+            {data : 'Prénom'},
+            {data : null,
+             defaultContent: '<div class="btn-group"> <button type="button" id="btn-sup" class="btn-sup"> Supprimer </button></div>'
+            }
           ]
         })
 
@@ -115,6 +117,32 @@ $(function(){
       }
     });
   });
+
+
+  var table = $('#table_data2').DataTable();
+  $('#table_data2 tbody').on( 'click','.btn-sup', function () {
+    var user_id = table.row(this).data();
+    console.log(user_id);
+
+    // $.ajax({
+    //   url :'http://localhost:8080/user_delete',
+    //   type : 'POST',
+    //   data:{user_id:user_id},
+    //   dataType : 'json',
+    //   success : function(data){
+    //     console.log('Success'),
+    //     console.log(data);
+    //     dataTable.ajax.reload();
+
+    //   },
+
+    //   error : function(resultat,statut , erreur){
+    //     console.log('Error'),
+    //     console.log(resultat),
+    //     console.log(statut);
+    //   }
+    // });
+});
 
 });
 
