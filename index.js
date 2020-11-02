@@ -4,6 +4,7 @@ var fs =require ('fs')
 const mysql = require('mysql')
 const { type } = require('os')
 const { constants } = require('buffer')
+const { data } = require('jquery')
 
 const APP_HOST = process.env.APP_HOST;
 const APP_USER = process.env.APP_USER;
@@ -96,7 +97,7 @@ server.on('request' , (request,response) => {
      
         console.log("Connecté à la base de données MySQL!");
 
-        con.query("Delete FROM user where id like "+user_id,
+        con.query("Delete FROM user where id = '"+user_id+" ",
 
         console.log("L'utilisateur as été supprimer "),
         

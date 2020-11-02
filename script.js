@@ -1,5 +1,6 @@
 $(function(){
   var i = 0;
+  var table ;
   
   $('#btn').on('click',function(){
     if($(this).attr('data-click-state') == 1) {
@@ -46,8 +47,7 @@ $(function(){
       type : 'GET',
       dataType : 'json',
       success : function(code_JSON, statut){
-        console.log('Success'),
-        console.log(statut)
+        console.log('Success',statut),
         console.log(code_JSON);
        //('#myModal').find('.modal-body table').append(JSON.stringify(code_JSON))
 
@@ -85,17 +85,17 @@ $(function(){
     });
 
   });
-  $('#btn_data').on('click',function(){
 
+     function recuperation_donnee(){
+      //table.destroy();
     $.ajax({
       url :'http://localhost:8080/user',
       type : 'GET',
       dataType : 'json',
       success : function(code_JSON,statut){
-        console.log('Success'),
-        console.log(statut)
+        console.log('Success', statut),
         console.log(code_JSON)
-        $('#table_data2').dataTable({ 
+        table = $('#table_data2').DataTable({ 
           data : code_JSON,
           columns:[
             {data : 'id'},
@@ -116,33 +116,44 @@ $(function(){
         console.log(statut);
       }
     });
+    
+
+  }
+  
+
+  $('#btn_data').on('click',function(){
+    
+    recuperation_donnee();
+
   });
 
-
-  var table = $('#table_data2').DataTable();
-  $('#table_data2 tbody').on( 'click','.btn-sup', function () {
-    var user_id = table.row(this).data();
-    console.log(user_id);
-
-    // $.ajax({
-    //   url :'http://localhost:8080/user_delete',
-    //   type : 'POST',
-    //   data:{user_id:user_id},
-    //   dataType : 'json',
-    //   success : function(data){
-    //     console.log('Success'),
-    //     console.log(data);
-    //     dataTable.ajax.reload();
-
-    //   },
-
-    //   error : function(resultat,statut , erreur){
-    //     console.log('Error'),
-    //     console.log(resultat),
-    //     console.log(statut);
-    //   }
-    // });
-});
+  
+   //table = $('#table_data2').DataTable({recuperation_donnee});
+   //console.log(table.row( $(this).parents('tr') ).data());
+   $('#table_data2').on('click','.btn-sup', function() {
+     var user_id = table.row( $(this).parents('tr') ).data();
+     console.log(user_id['id']);
+     user_id=user_id['id'];
+   $.ajax({
+           url :'http://localhost:8080/user_delete',
+           type : 'DELETE',
+           data:{user_id :user_id},
+           dataType : 'json',
+           success : function(data){ 
+             console.log('Success'),
+             console.log(data);
+             recuperation_donnee();
+             
+     
+           },
+     
+           error : function(resultat,statut , erreur){
+             console.log('Error'),
+             console.log(resultat),
+             console.log(statut);
+           }
+          });
+ });
 
 });
 
