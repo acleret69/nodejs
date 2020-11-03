@@ -137,12 +137,14 @@ $(function(){
    $.ajax({
            url :'http://localhost:8080/user_delete',
            type : 'DELETE',
-           data:{user_id :user_id},
+           data:{id :user_id},
            dataType : 'json',
            success : function(data){ 
              console.log('Success'),
              console.log(data);
+             table.destroy();
              recuperation_donnee();
+             
              
      
            },
