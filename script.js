@@ -116,11 +116,7 @@ $(function(){
         console.log(statut);
       }
     });
-    
-
   }
-  
-
   $('#btn_data').on('click',function(){
     
     recuperation_donnee();
