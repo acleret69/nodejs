@@ -20,7 +20,6 @@ $(function(){
   });
 
   $('#ajax').on('click',function(){
-    
     $.ajax({
       url :'http://localhost:8080/ajax',
       type : 'GET',
@@ -40,8 +39,7 @@ $(function(){
     });  
   });
 
-  $('#BDD').on('click',function(){
-    
+  $('#BDD').on('click',function(){  
     $.ajax({
       url :'http://localhost:8080/user',
       type : 'GET',
@@ -49,8 +47,6 @@ $(function(){
       success : function(code_JSON, statut){
         console.log('Success',statut),
         console.log(code_JSON);
-       //('#myModal').find('.modal-body table').append(JSON.stringify(code_JSON))
-
           var user_data = '';
           var i = 0;
           $.each(code_JSON,function(key,value){
@@ -74,7 +70,6 @@ $(function(){
             user_data += '</tr>';   
           });
           $('#myModal').find('.modal-body #tdata').append(user_data);
-
       },
 
       error : function(resultat,statut , erreur){
@@ -83,11 +78,9 @@ $(function(){
         console.log(statut);
       }
     });
-
   });
 
      function recuperation_donnee(){
-      //table.destroy();
     $.ajax({
       url :'http://localhost:8080/user',
       type : 'GET',
@@ -97,6 +90,10 @@ $(function(){
         console.log(code_JSON)
         table = $('#table_data2').DataTable({ 
           data : code_JSON,
+          // dom :'Bfrtip',
+          // buttons:[
+          //   {extend :'Create User',className :'create_user'}
+          // ],
           columns:[
             {data : 'id'},
             {data : 'Name'},
@@ -107,7 +104,6 @@ $(function(){
             }
           ]
         })
-
       },
 
       error : function(resultat,statut , erreur){
@@ -117,15 +113,13 @@ $(function(){
       }
     });
   }
+  
   $('#btn_data').on('click',function(){
     
     recuperation_donnee();
 
   });
 
-  
-   //table = $('#table_data2').DataTable({recuperation_donnee});
-   //console.log(table.row( $(this).parents('tr') ).data());
    $('#table_data2').on('click','.btn-sup', function() {
      var user_id = table.row( $(this).parents('tr') ).data();
      console.log(user_id['id']);
@@ -133,16 +127,13 @@ $(function(){
    $.ajax({
            url :'http://localhost:8080/user_delete',
            type : 'DELETE',
-           data:{id :user_id},
+           data:{user_id},
            dataType : 'json',
            success : function(data){ 
              console.log('Success'),
              console.log(data);
-             table.destroy();
-             recuperation_donnee();
-             
-             
-     
+              table.destroy();
+             recuperation_donnee();   
            },
      
            error : function(resultat,statut , erreur){
@@ -152,6 +143,33 @@ $(function(){
            }
           });
  });
+
+ $('.btn-create').on('click', function() {
+   user_id = 70;
+   var  user_name="Cleret";
+   var user_age=20;
+   var user_prenom="Aldrick"
+   console.log(user_id , user_name,user_age,user_prenom);
+$.ajax({
+        url :'http://localhost:8080/user_create',
+        type : 'POST',
+        data:{user_id,user_name,user_age,user_prenom},
+        dataType : 'json',
+        success : function(data){ 
+          console.log('Success'),
+          console.log(data);
+           table.destroy();
+          recuperation_donnee();   
+        },
+  
+        error : function(resultat,statut , erreur){
+          console.log('Error'),
+          console.log(resultat),
+          console.log(statut);
+        }
+       });
+});
+
 
 });
 

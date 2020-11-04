@@ -18,21 +18,24 @@ console.log(APP_DATABASE)
 
 const server = http.createServer()
 
+function doQuery(onConnectFunction) {
+  var con = mysql.createConnection({
+    host: APP_HOST,
+    user: APP_USER,
+    password: APP_PASSWORD,
+    database: APP_DATABASE
+  });
+
+  con.connect(function (err) {
+    if (err) throw err;
+    onConnectFunction(con);
+  });
+}
+
 server.on('request', (request, response) => {
 
   console.log('request', request)
 
-  // if (request.method === 'DELETE') {
-  //   let body = '';
-  //   request.on('data', chunk => {
-  //     body += chunk.toString(); // convert Buffer to string
-  //   });
-  //   request.on('end', () => {
-  //     console.log(body);
-  //     response.end('ok');
-  //   });
-  //   return
-//  }
   var url_parts = url.parse(request.url)
 
   const headers = {
@@ -53,16 +56,7 @@ server.on('request', (request, response) => {
     response.end(JSON.stringify({ message: "hello world ajax" }))
   }
   else if (url_parts.pathname == '/user') {
-    var con = mysql.createConnection({
-      host: APP_HOST,
-      user: APP_USER,
-      password: APP_PASSWORD,
-      database: APP_DATABASE
-    });
-
-    con.connect(function (err) {
-      if (err) throw err;
-
+    doQuery(function(con){
       console.log("Connecté à la base de données MySQL!");
       con.query("SELECT * FROM user ",
         function (err, result) {
@@ -76,16 +70,7 @@ server.on('request', (request, response) => {
     });
 
   }else if (url_parts.pathname == '/user_delete' && request.method== 'DELETE') {
-    var con = mysql.createConnection({
-      host: APP_HOST,
-      user: APP_USER,
-      password: APP_PASSWORD,
-      database: APP_DATABASE
-    });
-
-    con.connect(function (err) {
-
-            if (err) throw err;
+    doQuery(function(con){
       console.log("Connecté à la base de données MySQL!"); // connect db
       let body = '';
       request.on('data', chunk => {
@@ -93,8 +78,8 @@ server.on('request', (request, response) => {
       });
       request.on('end', () => {
       console.log(body);
-      var user_id = body;
-      con.query("Delete FROM user where "+user_id+"", //query sql
+      var user_id = body.slice(8);
+      con.query("DELETE FROM user WHERE id = ?",[user_id], //query sql
         function (err, result) { // résultat query
           if (err) throw err;
             con.query("SELECT * FROM user ",
@@ -107,10 +92,41 @@ server.on('request', (request, response) => {
               response.end(JSON.stringify(result))
           });
         });
-      });
-      
+      });     
     });
-
+  }else if (url_parts.pathname == '/user_create' && request.method == 'POST'){
+    doQuery(function(con){
+      console.log("Connecté à la base de données MySQL!"); // connect db
+      let body = '';
+      request.on('data', chunk => {
+      body += chunk.toString(); 
+      });
+      request.on('end', () => {
+      console.log(body);
+      var user_id = body.slice(8,10);
+      console.log(user_id);
+      var user_name = body.slice(21,27);
+      console.log(user_name);
+      var user_age = body.slice(37,39);
+      console.log(user_age);
+      var user_prenom= body.slice(52);
+      console.log(user_prenom);
+      var post = {id:user_id, Name:user_name, Age:user_age, Prénom:user_prenom};
+      con.query("INSERT INTO user SET ?",post, //query sql
+      function (err, result) { // résultat query
+        if (err) throw err;
+          con.query("SELECT * FROM user ",
+          function (err, result) {
+            if (err) throw err;
+            console.log(result);
+            console.log(JSON.stringify(result[0]))
+            response.setHeader('Content-Type', 'application/json')
+            response.writeHead(200, headers)
+            response.end(JSON.stringify(result))
+          });
+        });
+      });    
+    }); 
   }
   else {
     response.writeHead(200, {
