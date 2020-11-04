@@ -16,7 +16,7 @@ console.log(APP_USER)
 console.log(APP_PASSWORD)
 console.log(APP_DATABASE)
 
-const server = http.createServer()
+const server = http.createServer() 
 
 function doQuery(onConnectFunction) {
   var con = mysql.createConnection({
