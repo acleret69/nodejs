@@ -22,17 +22,36 @@ console.log(APP_DATABASE)
 const server = http.createServer() 
 
 function doQuery(onConnectFunction) {
-  var con = mysql.createConnection({
-    host: APP_HOST,
-    user: APP_USER,
-    password: APP_PASSWORD,
-    database: APP_DATABASE
+  return new Promise(function() {
+    var con = mysql.createConnection({
+      host: APP_HOST,
+      user: APP_USER,
+      password: APP_PASSWORD,
+      database: APP_DATABASE
+    });
+    con.connect(function (err) {
+      if (err) throw err;
+      onConnectFunction(con);
+    });
   });
+}
 
-  con.connect(function (err) {
-    if (err) throw err;
-    onConnectFunction(con);
-  });
+function SelectAll(){
+  return new Promise(function(resolve,reject){
+    con.query("SELECT * FROM user ",
+      function (err, result) {
+        if (err) 
+        {
+         return reject(err);
+        }
+        console.log(result);
+        console.log(JSON.stringify(result[0]))
+        response.setHeader('Content-Type', 'application/json')
+        response.writeHead(200, headers)
+        response.end(JSON.stringify(result))
+        return resolve(result)
+     });
+ })  
 }
 
 server.on('request', (request, response) => {
@@ -54,8 +73,8 @@ server.on('request', (request, response) => {
   }
 
   if (url_parts.pathname == '/user' && request.method== 'DELETE') {
-    doQuery(function(con){
-      console.log("Connecté à la base de données MySQL!"); // connect db
+      doQuery(function(con){
+      console.log("DELETE Connecté"); // connect db
       let body = '';
       request.on('data', chunk => {
       body += chunk.toString(); 
@@ -80,7 +99,7 @@ server.on('request', (request, response) => {
     });
   }else if (url_parts.pathname == '/user' && request.method == 'POST'){
     doQuery(function(con){
-      console.log("Connecté à la base de données MySQL!"); // connect db
+      console.log("POST Connecté"); // connect db
       let body = '';
       request.on('data', chunk => {
       body += chunk.toString(); 
@@ -119,16 +138,17 @@ server.on('request', (request, response) => {
   }
   else {
     doQuery(function(con){
-      console.log("Connecté à la base de données MySQL!");
-      con.query("SELECT * FROM user ",
-        function (err, result) {
-          if (err) throw err;
-          console.log(result);
-          console.log(JSON.stringify(result[0]))
-          response.setHeader('Content-Type', 'application/json')
-          response.writeHead(200, headers)
-          response.end(JSON.stringify(result))
-        });
+      console.log("SELECT * Connecté");
+      SelectAll();
+      // con.query("SELECT * FROM user ",
+      //   function (err, result) {
+      //     if (err) throw err;
+      //     console.log(result);
+      //     console.log(JSON.stringify(result[0]))
+      //     response.setHeader('Content-Type', 'application/json')
+      //     response.writeHead(200, headers)
+      //     response.end(JSON.stringify(result))
+        // });
     });
   }
 })
