@@ -7,6 +7,7 @@ const { constants } = require('buffer')
 const { data } = require('jquery')
 const { v4: uuidv4 } = require('uuid');
 const { randomInt } = require('crypto')
+const { resolve } = require('path')
 
 
 const APP_HOST = process.env.APP_HOST;
@@ -36,23 +37,57 @@ function doQuery(onConnectFunction) {
   });
 }
 
-function SelectAll(){
-  return new Promise(function(resolve,reject){
-    con.query("SELECT * FROM user ",
-      function (err, result) {
-        if (err) 
-        {
-         return reject(err);
-        }
-        console.log(result);
-        console.log(JSON.stringify(result[0]))
-        response.setHeader('Content-Type', 'application/json')
-        response.writeHead(200, headers)
-        response.end(JSON.stringify(result))
-        return resolve(result)
-     });
- })  
+let config = {
+  
 }
+class database { 
+  constructeur (config) { 
+    this.connection = mysql.createConnection ({
+      host: APP_HOST,
+      user: APP_USER,
+      password: APP_PASSWORD,
+      database: APP_DATABASE
+    }); 
+} 
+  query (sql, args) { 
+      return new Promise ((résoudre, rejeter) => { 
+          this.connection.query (sql, args, (err, rows) => { 
+              if (err) 
+                  return rejeter (err); 
+              resolve ( lignes); 
+          }); 
+      }); 
+  } 
+  close () { 
+    return new Promise ((résoudre, rejeter) => { 
+          this.connection.end (err => { 
+              si (err) 
+                  return rejeter (err); 
+              resolve(); 
+          });
+      }); 
+  } 
+}
+
+
+
+// function SelectAll(){
+//   return new Promise(function(resolve,reject){
+//     con.query("SELECT * FROM user ",
+//       function (err, result) {
+//         if (err) 
+//         {
+//          return reject(err);
+//         }
+//         console.log(result);
+//         console.log(JSON.stringify(result[0]))
+//         response.setHeader('Content-Type', 'application/json')
+//         response.writeHead(200, headers)
+//         response.end(JSON.stringify(result))
+//         return resolve(result)
+//      });
+//  })  
+// }
 
 server.on('request', (request, response) => {
 
@@ -139,7 +174,17 @@ server.on('request', (request, response) => {
   else {
     doQuery(function(con){
       console.log("SELECT * Connecté");
-      SelectAll();
+      database.query('SELECT * FROM user ').then (  rows => 
+        function (err, rows) {
+              if (err) throw err;
+              console.log(rows);
+              console.log(JSON.stringify(rows[0]))
+              response.setHeader('Content-Type', 'application/json')
+              response.writeHead(200, headers)
+              response.end(JSON.stringify(rows))
+             });
+      })
+      //SelectAll();
       // con.query("SELECT * FROM user ",
       //   function (err, result) {
       //     if (err) throw err;
@@ -148,8 +193,8 @@ server.on('request', (request, response) => {
       //     response.setHeader('Content-Type', 'application/json')
       //     response.writeHead(200, headers)
       //     response.end(JSON.stringify(result))
-        // });
-    });
+      //    });
+    //});
   }
 })
 server.listen('8080')
