@@ -1,13 +1,8 @@
-var http = require('http')
-var url = require("url")
-var fs = require('fs')
-const mysql = require('mysql')
-const { type } = require('os')
-const { constants } = require('buffer')
-const { data } = require('jquery')
+var http = require('http');
+var url = require("url");
+const mysql = require('mysql');
 const { v4: uuidv4 } = require('uuid');
-const { randomInt } = require('crypto')
-const { resolve } = require('path')
+const util = require('util');;
 
 
 const APP_HOST = process.env.APP_HOST;
@@ -20,76 +15,70 @@ console.log(APP_USER)
 console.log(APP_PASSWORD)
 console.log(APP_DATABASE)
 
-const server = http.createServer() 
-
-function doQuery(onConnectFunction) {
-  return new Promise(function() {
-    var con = mysql.createConnection({
-      host: APP_HOST,
-      user: APP_USER,
-      password: APP_PASSWORD,
-      database: APP_DATABASE
-    });
-    con.connect(function (err) {
-      if (err) throw err;
-      onConnectFunction(con);
-    });
-  });
-}
-
 let config = {
-  
-}
-class database { 
-  constructeur (config) { 
-    this.connection = mysql.createConnection ({
-      host: APP_HOST,
-      user: APP_USER,
-      password: APP_PASSWORD,
-      database: APP_DATABASE
-    }); 
-} 
-  query (sql, args) { 
-      return new Promise ((résoudre, rejeter) => { 
-          this.connection.query (sql, args, (err, rows) => { 
-              if (err) 
-                  return rejeter (err); 
-              resolve ( lignes); 
-          }); 
-      }); 
-  } 
-  close () { 
-    return new Promise ((résoudre, rejeter) => { 
-          this.connection.end (err => { 
-              si (err) 
-                  return rejeter (err); 
-              resolve(); 
-          });
-      }); 
-  } 
+  host: APP_HOST,
+  user: APP_USER,
+  password: APP_PASSWORD,
+  database: APP_DATABASE
 }
 
+function makeDb(config) {
+  console.log("config :", config)
+  const connection = mysql.createConnection(config);
+  return {
+    query(sql, args) {
+      return util.promisify(connection.query)
+        .call(connection, sql, args);
+    },
+    close() {
+      return util.promisify(connection.end).call(connection);
+    },
 
+  };
+}
 
-// function SelectAll(){
-//   return new Promise(function(resolve,reject){
-//     con.query("SELECT * FROM user ",
-//       function (err, result) {
-//         if (err) 
-//         {
-//          return reject(err);
-//         }
-//         console.log(result);
-//         console.log(JSON.stringify(result[0]))
-//         response.setHeader('Content-Type', 'application/json')
-//         response.writeHead(200, headers)
-//         response.end(JSON.stringify(result))
-//         return resolve(result)
-//      });
-//  })  
-// }
+let recupId = function (request) {
+  return new Promise((resolve) => {
+    let body = '';
+    request.on('data', chunk => {
+      body += chunk.toString();
+    })
+    request.on('end', () => {
+      console.log(body);
+      var user_id = body.slice(8);
+      resolve(user_id);
+    })
+  }
+  )
+};
 
-server.on('request', (request, response) => {
+let recupData = function (request) {
+  return new Promise((resolve) => {
+    let body = '';
+    request.on('data', chunk => {
+      body += chunk.toString();
+    });
+    request.on('end', () => {
+      console.log(body);
+      body = body.split('&');
+      var user_id = uuidv4();
+      user_id = user_id.split('-');
+      user_id = user_id[0];
+      console.log(user_id);
+      var user_name = body[0].slice(10);
+      console.log(user_name);
+      var user_age = body[1].slice(9);
+      console.log(user_age);
+      var user_prenom = body[2].slice(12);
+      console.log(user_prenom);
+      var post = { id: user_id, Name: user_name, Age: user_age, Prénom: user_prenom };
+      resolve(post);
+    })
+  })
+}
+
+const server = http.createServer();
+server.on('request', async (request, response) => {
 
   console.log('request')//,request)
 
@@ -107,94 +96,62 @@ server.on('request', (request, response) => {
     return
   }
 
-  if (url_parts.pathname == '/user' && request.method== 'DELETE') {
-      doQuery(function(con){
-      console.log("DELETE Connecté"); // connect db
-      let body = '';
-      request.on('data', chunk => {
-      body += chunk.toString(); 
-      });
-      request.on('end', () => {
-      console.log(body);
-      var user_id = body.slice(8);
-      con.query("DELETE FROM user WHERE id = ?",[user_id], //query sql
-        function (err, result) { // résultat query
-          if (err) throw err;
-            con.query("SELECT * FROM user ",
-            function (err, result) {
-              if (err) throw err;
-              console.log(result);
-              console.log(JSON.stringify(result[0]))
-              response.setHeader('Content-Type', 'application/json')
-              response.writeHead(200, headers)
-              response.end(JSON.stringify(result))
-          });
-        });
-      });     
-    });
-  }else if (url_parts.pathname == '/user' && request.method == 'POST'){
-    doQuery(function(con){
-      console.log("POST Connecté"); // connect db
-      let body = '';
-      request.on('data', chunk => {
-      body += chunk.toString(); 
-      });
-      request.on('end', () => {
-      console.log(body);
-      body=body.split('&');
-      //var user_id = body[0].slice(8);
-      //var user_id=0;
-     var user_id = uuidv4();
-     user_id=user_id.split('-');
-     user_id=user_id[0];
-      console.log(user_id);
-      var user_name = body[0].slice(10);
-      console.log(user_name);
-      var user_age = body[1].slice(9);
-      console.log(user_age);
-      var user_prenom= body[2].slice(12);
-      console.log(user_prenom);
-      var post = {id:user_id, Name:user_name, Age:user_age, Prénom:user_prenom};
-      con.query("INSERT INTO user SET ?",post, //query sql
-      function (err, result) { // résultat query
-        if (err) throw err;
-          con.query("SELECT * FROM user ",
-          function (err, result) {
-            if (err) throw err;
-            console.log(result);
-            console.log(JSON.stringify(result[0]))
-            response.setHeader('Content-Type', 'application/json')
-            response.writeHead(200, headers)
-            response.end(JSON.stringify(result))
-          });
-        });
-      });    
-    }); 
+  if (url_parts.pathname == '/user' && request.method == 'DELETE') {
+    const db = makeDb(config);
+    try {
+      const user_id = await recupId(request);
+      console.log("user_id :", user_id);
+      const result_delete = await db.query("DELETE FROM user WHERE id = ?", [user_id]);
+      console.log(result_delete)
+      const result = await db.query('SELECT * FROM user');
+      console.log(result);
+      console.log(JSON.stringify(result[0]));
+      response.setHeader('Content-Type', 'application/json');
+      response.writeHead(200, headers);
+      response.end(JSON.stringify(result));
+    } catch (err) {
+      console.log("Erreur", err);
+      throw err;
+    } finally {
+      await db.close();
+    }
+
+  } else if (url_parts.pathname == '/user' && request.method == 'POST') {
+
+    const db = makeDb(config);
+    try {
+      const post = await recupData(request);
+      const result_post = await db.query("INSERT INTO user SET ?", post);
+      console.log(result_post);
+      const result = await db.query('SELECT * FROM user');
+      console.log(result);
+      console.log(JSON.stringify(result[0]));
+      response.setHeader('Content-Type', 'application/json');
+      response.writeHead(200, headers);
+      response.end(JSON.stringify(result));
+    } catch (err) {
+      console.log("Erreur", err);
+      throw err;
+    } finally {
+      await db.close();
+    }
   }
   else {
-    doQuery(function(con){
+    db = makeDb(config);
+    try {
       console.log("SELECT * Connecté");
-      database.query('SELECT * FROM user ').then (  rows => 
-        function (err, rows) {
-              if (err) throw err;
-              console.log(rows);
-              console.log(JSON.stringify(rows[0]))
-              response.setHeader('Content-Type', 'application/json')
-              response.writeHead(200, headers)
-              response.end(JSON.stringify(rows))
-             });
-      })
-      //SelectAll();
-      // con.query("SELECT * FROM user ",
-      //   function (err, result) {
-      //     if (err) throw err;
-      //     console.log(result);
-      //     console.log(JSON.stringify(result[0]))
-      //     response.setHeader('Content-Type', 'application/json')
-      //     response.writeHead(200, headers)
-      //     response.end(JSON.stringify(result))
-      //    });
-    //});
+      const result = await db.query('SELECT * FROM user');
+      console.log(result);
+      console.log(JSON.stringify(result[0]));
+      response.setHeader('Content-Type', 'application/json');
+      response.writeHead(200, headers);
+      response.end(JSON.stringify(result));
+    } catch (err) {
+      console.log("Erreur");
+      throw err;
+    } finally {
+      await db.close();
+    }
   }
 })
 server.listen('8080')
